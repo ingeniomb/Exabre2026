@@ -6,6 +6,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceArea,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -47,10 +48,12 @@ export function TimeSeriesChart({
   refs = [],
   height = 200,
   decimals = 1,
+  xDecimals = 0,
 }: {
   data: object[];
   xKey: string;
   yKey: string;
+  xDecimals?: number;
   name: string;
   unit: string;
   color?: string;
@@ -70,7 +73,7 @@ export function TimeSeriesChart({
             {...axis}
             type="number"
             domain={["dataMin", "dataMax"]}
-            tickFormatter={(v: number) => `${Math.round(v)}`}
+            tickFormatter={(v: number) => v.toFixed(xDecimals)}
             unit={` ${xUnit}`}
             minTickGap={28}
           />
@@ -148,6 +151,120 @@ export function SpectrumChart({
           />
         </AreaChart>
       </ResponsiveContainer>
+    </div>
+  );
+}
+
+export interface SerieDef {
+  key: string;
+  name: string;
+  color: string;
+  dashed?: boolean;
+}
+
+export interface Banda {
+  y1: number;
+  y2: number;
+  label: string;
+  color: string;
+}
+
+/** Varias series con la MISMA unidad sobre un solo eje, con leyenda y bandas horizontales opcionales. */
+export function MultiSeriesChart({
+  data,
+  xKey,
+  series,
+  unit,
+  xUnit = "s",
+  yDomain,
+  refs = [],
+  bandas = [],
+  height = 220,
+  decimals = 1,
+  xDecimals = 0,
+}: {
+  data: object[];
+  xKey: string;
+  series: SerieDef[];
+  unit: string;
+  xUnit?: string;
+  yDomain?: YAxisProps["domain"];
+  refs?: RefMark[];
+  bandas?: Banda[];
+  height?: number;
+  decimals?: number;
+  xDecimals?: number;
+}) {
+  return (
+    <div className="w-full">
+      <div className="mb-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-300">
+        {series.map((s) => (
+          <span key={s.key} className="inline-flex items-center gap-1.5">
+            <span
+              className="inline-block h-0.5 w-4 rounded"
+              style={{ background: s.dashed ? `repeating-linear-gradient(90deg, ${s.color} 0 4px, transparent 4px 7px)` : s.color }}
+            />
+            {s.name}
+          </span>
+        ))}
+      </div>
+      <div style={{ height }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 8, right: 12, bottom: 4, left: -8 }}>
+            <CartesianGrid {...grid} />
+            {bandas.map((b) => (
+              <ReferenceArea
+                key={b.label}
+                y1={b.y1}
+                y2={b.y2}
+                fill={b.color}
+                fillOpacity={0.08}
+                stroke="none"
+                label={b.label ? { value: b.label, fill: "#94a3b8", fontSize: 10, position: "insideLeft" } : undefined}
+                ifOverflow="hidden"
+              />
+            ))}
+            <XAxis
+              dataKey={xKey}
+              {...axis}
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              tickFormatter={(v: number) => v.toFixed(xDecimals)}
+              unit={` ${xUnit}`}
+              minTickGap={28}
+            />
+            <YAxis {...axis} domain={yDomain ?? ["auto", "auto"]} width={52} tickFormatter={(v: number) => v.toFixed(0)} />
+            <Tooltip
+              {...tooltipStyle}
+              formatter={(v, n) => [`${Number(v).toFixed(decimals)} ${unit}`, String(n)]}
+              labelFormatter={(l) => `t = ${Number(l).toFixed(xDecimals + 1)} ${xUnit}`}
+              cursor={{ stroke: "#64748b", strokeWidth: 1 }}
+            />
+            {refs.map((r) => (
+              <ReferenceLine
+                key={r.label}
+                y={r.value}
+                stroke={r.color ?? "#f97316"}
+                strokeDasharray="5 4"
+                label={{ value: r.label, fill: "#94a3b8", fontSize: 10, position: "insideTopRight" }}
+              />
+            ))}
+            {series.map((s) => (
+              <Line
+                key={s.key}
+                type="monotone"
+                dataKey={s.key}
+                name={s.name}
+                stroke={s.color}
+                strokeWidth={2}
+                strokeDasharray={s.dashed ? "6 4" : undefined}
+                dot={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

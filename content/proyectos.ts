@@ -29,7 +29,7 @@ export const proyectos: ProyectoInfo[] = [
       "Cilindro metálico horizontal motorizado sobre una estufa de gas que mezcla y tuesta los granos.",
     ruta: "/proyectos/tostadora",
     etiquetas: ["Transferencia de calor", "Mecanismos", "Control de proceso"],
-    disponible: false,
+    disponible: true,
   },
   {
     id: "recirculacion",
@@ -39,7 +39,7 @@ export const proyectos: ProyectoInfo[] = [
       "Recolección, separación de sólidos, tratamiento conceptual y retorno controlado del agua de proceso.",
     ruta: "/proyectos/recirculacion",
     etiquetas: ["Hidráulica", "Bombas", "Uso eficiente del agua"],
-    disponible: false,
+    disponible: true,
   },
   {
     id: "vision-avicola",
@@ -49,6 +49,6 @@ export const proyectos: ProyectoInfo[] = [
       "Cámara y modelo de visión artificial como herramienta de apoyo para la vigilancia sanitaria avícola.",
     ruta: "/proyectos/vision-avicola",
     etiquetas: ["Visión artificial", "Clasificación", "Sistemas embebidos"],
-    disponible: false,
+    disponible: true,
   },
 ];

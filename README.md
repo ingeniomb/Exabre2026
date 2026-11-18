@@ -4,14 +4,12 @@ Aplicación web con simulaciones técnicas animadas de cuatro proyectos de ingen
 
 > Todos los valores que muestra la aplicación son **simulados** con fines educativos.
 
-## Estado actual (fase 1)
+## Proyectos
 
-| Proyecto | Estado |
-|---|---|
-| 1. Monitoreo inteligente de un motor eléctrico | Completo |
-| 2. Tostadora de café con tambor giratorio | Siguiente fase |
-| 3. Recirculación de agua para peladora de pollos | Siguiente fase |
-| 4. Reconocimiento de imágenes de excrementos de gallinas | Siguiente fase |
+1. Monitoreo inteligente de un motor eléctrico
+2. Tostadora de café con tambor giratorio
+3. Recirculación de agua para peladora de pollos
+4. Reconocimiento de imágenes de excrementos de gallinas
 
 ## Requisitos
 
@@ -42,7 +40,7 @@ npm start
    ```bash
    git init
    git add .
-   git commit -m "ExpoIngeniería fase 1"
+   git commit -m "ExpoIngeniería"
    git branch -M main
    git remote add origin https://github.com/SU_USUARIO/expoingenieria.git
    git push -u origin main
@@ -75,7 +73,8 @@ El botón **T** de la barra superior amplía el texto para verlo mejor en el pro
 ## Dónde editar los textos
 
 - `content/proyectos.ts`: títulos, resúmenes y etiquetas de las tarjetas del inicio.
-- `features/motor/content.tsx`: textos educativos del Proyecto 1.
+- `features/<proyecto>/content.tsx`: textos educativos de cada proyecto (pestañas Componentes, ¿Cómo funciona?, etc.).
+- `features/vision-avicola/muestras.tsx`: ejemplos de la galería del Proyecto 4 (descripciones, categorías y notas).
 
 ## Estructura
 
@@ -86,7 +85,10 @@ components/layout        plantilla común de cada proyecto (ProjectShell)
 components/three         lienzo 3D común y etiquetas
 components/charts        gráficas (Recharts)
 components/previews      animaciones SVG de las tarjetas del inicio
-features/motor           Proyecto 1: simulación, clasificador, escena 3D y vista
+features/motor           Proyecto 1: motor eléctrico
+features/tostadora       Proyecto 2: tostadora de café
+features/recirculacion   Proyecto 3: recirculación de agua
+features/vision-avicola  Proyecto 4: visión artificial
 lib/                     FFT, bucle de simulación, utilidades
 ```
 
@@ -109,3 +111,26 @@ Cada proyecto separa tres cosas:
 
 - **Modelo entrenado:** implemente la interfaz `Clasificador` de `features/motor/classifier.ts` (por ejemplo, con TensorFlow.js) y reemplace `clasificadorDemostrativo` en `features/motor/store.ts`.
 - **ESP32 real:** sustituya la función `paso()` por lecturas recibidas mediante WebSocket o MQTT sobre WebSocket y escriba los valores en `motorSim.estado`.
+
+## Proyecto 2: modelo usado
+
+- Tambor precalentado; temperatura del tambor y del grano con modelos de primer orden acoplados.
+- La transferencia de calor depende de la mezcla, que es máxima cerca de 0,7 veces la velocidad crítica (n_c ≈ 42,3/√D) y cae al superarla (centrifugado).
+- Color del grano según la temperatura máxima alcanzada; una mezcla deficiente produce un tueste disparejo.
+- Etapas aproximadas: secado, amarilleo, Maillard, primer crack (≈196 °C) y desarrollo. Al cumplirse el tiempo se descarga y enfría.
+- El tiempo se acelera ×10, ×30 o ×60. La curva es ilustrativa.
+
+## Proyecto 3: modelo usado
+
+- Balance de masa del depósito: dV/dt = Q_entrada − Q_bomba − Q_rebose.
+- La peladora toma primero el agua de retorno y completa con agua nueva.
+- El filtro se colmata con el volumen tratado y reduce el caudal de la bomba; «Limpiar filtro» lo restablece.
+- Protección de la bomba por nivel bajo, con histéresis. Tiempo acelerado ×20.
+- Advertencia sanitaria visible: la simulación no certifica la calidad del agua.
+
+## Proyecto 4: funcionamiento
+
+- Galería de ilustraciones generadas por código (no fotografías).
+- Secuencia animada: identificación, captura, preprocesamiento (recorte, 224×224, escala de grises, normalización), análisis, resultado y alerta.
+- Resultado en tres niveles: observación visual, clasificación algorítmica (simulada) y diagnóstico veterinario (no lo emite el sistema).
+- Para conectar un modelo real, implemente la interfaz `ImageClassifier` de `features/vision-avicola/classifier.ts`.
